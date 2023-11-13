@@ -1,7 +1,9 @@
 // Affichage projet non plus par HTML  mais grace à l'API
+const gallery = document.querySelector(".gallery");
+let token = '';
 function init() {
   getProjects().then((projects) => {
-    displayGallery(projects, null);
+    displayGallery(projects, null, gallery);
   });
 
   getFilters().then((filters) => {
@@ -16,14 +18,12 @@ async function getProjects() {
   return await response.json();
 }
 
-const gallery = document.querySelector(".gallery");
-
-function displayGallery(projects, filterID) {
+function displayGallery(projects, filterID, container, displayTrash= false) {
   if (filterID !== null) {
     projects = projects.filter((project) => project.categoryId === filterID);
   }
 
-  gallery.innerHTML = "";
+  container.innerHTML = "";
 
   projects.forEach((item) => {
     const Div = document.createElement("figure");
@@ -31,9 +31,21 @@ function displayGallery(projects, filterID) {
       <img src="${item.imageUrl}" alt="${item.title}">
       <figcaption>${item.title}</figcaption>
       `;
-
     Div.innerHTML = addFig;
-    gallery.appendChild(Div);
+
+    if(displayTrash) {
+      const remove = document.createElement('i');
+      remove.classList.add('fa');
+      remove.classList.add('fa-trash');
+      remove.addEventListener('click', ()=> {
+        deleteProject(Div, item.id)
+      })
+      Div.appendChild(remove)
+    } else {
+      Div.setAttribute('id', 'project' + item.id)
+    }
+
+    container.appendChild(Div);
   });
 }
 
@@ -51,7 +63,7 @@ function displayFilters(filters) {
   btnTous.innerText = "Tous";
   btnTous.addEventListener("click", () => {
     getProjects().then((projects) => {
-      displayGallery(projects, null);
+      displayGallery(projects, null, gallery);
     });
   });
 
@@ -66,7 +78,7 @@ function displayFilters(filters) {
     button.innerText = filter.name;
     button.addEventListener("click", () => {
       getProjects().then((projects) => {
-        displayGallery(projects, filter.id);
+        displayGallery(projects, filter.id, gallery);
       });
     });
     divButtons.appendChild(button);
@@ -79,9 +91,9 @@ function displayFilters(filters) {
 
 function isLogIn() {
   if (localStorage.getItem("token") !== null) {
-    console.log("utilisateur connecté");
     const body = document.querySelector("body");
-
+    token = JSON.parse(localStorage.getItem("token"));
+    token = token.token
     createEditElements(body);
   }
 }
@@ -116,13 +128,28 @@ function createModal(body) {
   const modal = document.createElement("div");
   modal.classList.add("modal");
 
- 
-  
+  const gallery = document.createElement('div')
+  gallery.classList.add('gallery');
+  modal.appendChild(gallery);
+
 
   /* créeer la gallery */
-  /* suppression de projet */
+  getProjects().then((projects) => {
+    displayGallery(projects, null, gallery, true);
+  });
 
+
+  /* suppression de projet */
   overlay.appendChild(modal);
+
+  /* Créer la croix */
+  const croix = document.createElement("div");
+  croix.classList.add('close_modal')
+  croix.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+  croix.addEventListener("click", () => {
+    deleteModal(overlay);
+  });
+  overlay.appendChild(croix);
   body.appendChild(overlay);
 }
 
@@ -130,15 +157,24 @@ function deleteModal(overlay) {
   overlay.remove();
 }
 
- /* créer la croix */
+async function deleteProject(modalProject, projectId) {
+  const landingProject = document.querySelector('#project' + projectId);
+  console.log(token)
 
-const croix = document.createElement("div");
-  croix.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-  croix.addEventListener("click", () => {
-    deleteModal(overlay);
+  await fetch("http://localhost:5678/api/works/" + projectId, {
+    method: "DELETE",
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((response)=> {
+    if(response.ok) {
+      modalProject.remove();
+      landingProject.remove();
+    }
   });
-  body = document.querySelector('.body')
-  body.appendChild(croix);
+}
+
 
 
 
