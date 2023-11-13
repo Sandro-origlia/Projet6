@@ -5,37 +5,40 @@ form.addEventListener("submit", (e) => {
   e.preventDefault();
   const getForm = new FormData(form);
   const objForm = Object.fromEntries(getForm);
-  setForm(objForm);
-});
-
-const setForm = async (form) => {
-  try {
-    const requete = await fetch("http://localhost:5678/api/users/login", {
-      method: "POST",
-      body: JSON.stringify(form),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
+  setForm(objForm).then((requete) => {
     if (requete.ok) {
       error.style.display = "none";
-      getToken(requete);
-      location.href = "http://127.0.0.1:5500/FrontEnd/";
+      getToken(requete).then((body)=> {
+        localStorage.setItem("token", JSON.stringify(body));
+
+      });
+      location.href = "index.html";
     } else {
       error.classList.add("error");
       error.textContent = "Erreur dans l’identifiant ou le mot de passe";
     }
-  } catch (e) {
-    console.log(e);
-  }
+  });
+});
+
+const setForm = async (form) => {
+  return await fetch("http://localhost:5678/api/users/login", {
+    method: "POST",
+    body: JSON.stringify(form),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 };
 
 const getToken = async (response) => {
-  try {
-    const body = await response.json();
-    localStorage.setItem("token", JSON.stringify(body));
-  } catch (e) {
-    console.log(e);
-  }
+  return await response.json();
 };
+
+function checkLogin() {
+  if(localStorage.getItem('token') !== null) {
+    localStorage.removeItem('token');
+    error.textContent = "Vous avez été déconnecté";
+  }
+}
+
+checkLogin();
