@@ -1,6 +1,6 @@
 // Affichage projet non plus par HTML  mais grace à l'API
 const gallery = document.querySelector(".gallery");
-let token = '';
+let token = "";
 function init() {
   getProjects().then((projects) => {
     displayGallery(projects, null, gallery);
@@ -18,7 +18,7 @@ async function getProjects() {
   return await response.json();
 }
 
-function displayGallery(projects, filterID, container, displayTrash= false) {
+function displayGallery(projects, filterID, container, displayTrash = false) {
   if (filterID !== null) {
     projects = projects.filter((project) => project.categoryId === filterID);
   }
@@ -33,16 +33,16 @@ function displayGallery(projects, filterID, container, displayTrash= false) {
       `;
     Div.innerHTML = addFig;
 
-    if(displayTrash) {
-      const remove = document.createElement('i');
-      remove.classList.add('fa');
-      remove.classList.add('fa-trash');
-      remove.addEventListener('click', ()=> {
-        deleteProject(Div, item.id)
-      })
-      Div.appendChild(remove)
+    if (displayTrash) {
+      const remove = document.createElement("i");
+      remove.classList.add("fa");
+      remove.classList.add("fa-trash");
+      remove.addEventListener("click", () => {
+        deleteProject(Div, item.id);
+      });
+      Div.appendChild(remove);
     } else {
-      Div.setAttribute('id', 'project' + item.id)
+      Div.setAttribute("id", "project" + item.id);
     }
 
     container.appendChild(Div);
@@ -93,7 +93,7 @@ function isLogIn() {
   if (localStorage.getItem("token") !== null) {
     const body = document.querySelector("body");
     token = JSON.parse(localStorage.getItem("token"));
-    token = token.token
+    token = token.token;
     createEditElements(body);
   }
 }
@@ -128,23 +128,21 @@ function createModal(body) {
   const modal = document.createElement("div");
   modal.classList.add("modal");
 
-  const gallery = document.createElement('div')
-  gallery.classList.add('gallery');
+  const gallery = document.createElement("div");
+  gallery.classList.add("galleryModal");
   modal.appendChild(gallery);
-
 
   /* créeer la gallery */
   getProjects().then((projects) => {
     displayGallery(projects, null, gallery, true);
   });
 
-
   /* suppression de projet */
   overlay.appendChild(modal);
 
   /* Créer la croix */
   const croix = document.createElement("div");
-  croix.classList.add('close_modal')
+  croix.classList.add("close_modal");
   croix.innerHTML = '<i class="fa-solid fa-xmark"></i>';
   croix.addEventListener("click", () => {
     deleteModal(overlay);
@@ -153,29 +151,38 @@ function createModal(body) {
   body.appendChild(overlay);
 }
 
+// Construction 2 boutons de la modal 
+
+//const modalTitle = document.createElement("h1");
+//modalTitle.classList.add('modalTitle')
+//modalTitle.innerHTML = "Galerie photo";
+//modal.appendChild(modalTitle);
+
+//const btnAjouterPhoto = document.createElement("button");
+//btnAjouterPhoto.classList.add("btnConnexion");
+//btnAjouterPhoto.innerHTML = "Ajouter une photo";
+//modal.appendChild(btnAjouterPhoto);
+
 function deleteModal(overlay) {
   overlay.remove();
 }
 
 async function deleteProject(modalProject, projectId) {
-  const landingProject = document.querySelector('#project' + projectId);
-  console.log(token)
+  const landingProject = document.querySelector("#project" + projectId);
+  console.log(token);
 
   await fetch("http://localhost:5678/api/works/" + projectId, {
     method: "DELETE",
     headers: {
-      'Content-Type': 'application/json;charset=utf-8',
+      "Content-Type": "application/json;charset=utf-8",
       Authorization: `Bearer ${token}`,
     },
-  }).then((response)=> {
-    if(response.ok) {
+  }).then((response) => {
+    if (response.ok) {
       modalProject.remove();
       landingProject.remove();
     }
   });
 }
-
-
-
 
 init();
