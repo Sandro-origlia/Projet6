@@ -1,6 +1,8 @@
 // Affichage projet non plus par HTML  mais grace à l'API
 const gallery = document.querySelector(".gallery");
 let token = "";
+let modal = null;
+
 function init() {
   getProjects().then((projects) => {
     displayGallery(projects, null, gallery);
@@ -91,15 +93,15 @@ function displayFilters(filters) {
 
 function isLogIn() {
   if (localStorage.getItem("token") !== null) {
-    const body = document.querySelector("body");
     token = JSON.parse(localStorage.getItem("token"));
     token = token.token;
-    createEditElements(body);
+    createEditElements();
   }
 }
 
-function createEditElements(body) {
+function createEditElements() {
   /* Banniere d'edition */
+  const body = document.querySelector("body");
   const banner = document.createElement("div");
   banner.classList.add("banner");
   banner.innerHTML = '<i class="fa-regular fa-pen-to-square"></i> Modifier';
@@ -111,12 +113,13 @@ function createEditElements(body) {
   const editBtn = document.createElement("button");
   editBtn.innerHTML = '<i class="fa-regular fa-pen-to-square"></i> Modifier';
   editBtn.addEventListener("click", () => {
-    createModal(body);
+    createModal();
   });
   document.querySelector("#portfolio h2").appendChild(editBtn);
 }
 
-function createModal(body) {
+function createModal() {
+  const body = document.querySelector("body");
   const overlay = document.createElement("div");
   overlay.classList.add("overlay");
   overlay.addEventListener("click", (e) => {
@@ -125,7 +128,7 @@ function createModal(body) {
     }
   });
 
-  const modal = document.createElement("div");
+  modal = document.createElement("div");
   modal.classList.add("modal");
 
   const gallery = document.createElement("div");
@@ -136,6 +139,16 @@ function createModal(body) {
   getProjects().then((projects) => {
     displayGallery(projects, null, gallery, true);
   });
+
+
+  const button = document.createElement('button');
+  button.classList.add('add_project');
+  button.innerHTML = "Ajouter une photo"
+
+  button.addEventListener("click", () => {
+    displayAddProjectModal(modal, overlay);
+  });
+  modal.appendChild(button);
 
   /* suppression de projet */
   overlay.appendChild(modal);
@@ -151,17 +164,77 @@ function createModal(body) {
   body.appendChild(overlay);
 }
 
-// Construction 2 boutons de la modal 
+function displayAddProjectModal(modal, overlay) {
+  modal.innerHTML = "";
+  const modalTitle = document.createElement("h1");
+  modalTitle.classList.add('modalTitle')
+  modalTitle.innerHTML = "Galerie photo";
+  modal.appendChild(modalTitle);
 
-//const modalTitle = document.createElement("h1");
-//modalTitle.classList.add('modalTitle')
-//modalTitle.innerHTML = "Galerie photo";
-//modal.appendChild(modalTitle);
 
-//const btnAjouterPhoto = document.createElement("button");
-//btnAjouterPhoto.classList.add("btnConnexion");
-//btnAjouterPhoto.innerHTML = "Ajouter une photo";
-//modal.appendChild(btnAjouterPhoto);
+  /* Créer le bouton retour */
+  const back = document.createElement("div");
+  back.classList.add("back");
+  back.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
+  back.addEventListener("click", () => {
+    deleteModal(overlay)
+    createModal()
+  });
+  modal.appendChild(back);
+
+  /* CREER UN FORMULAIRE */
+  const form = document.createElement('form');
+  form.setAttribute('id', 'createProject')
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+  })
+
+  const projectName = document.createElement('input')
+  projectName.setAttribute('type', 'text')
+  projectName.setAttribute('name', 'title')
+  projectName.setAttribute('id', 'title')
+  form.appendChild(projectName);
+
+
+  const projectCategory = document.createElement('select')
+  projectCategory.setAttribute('name', 'category')
+  projectCategory.setAttribute('id', 'category')
+
+  getFilters().then((categories) => {
+    categories.forEach((categorie) => {
+      const option = document.createElement('option');
+      option.setAttribute('value', categorie.id);
+      option.setAttribute('name', categorie.name);
+      option.text = categorie.name;
+      projectCategory.appendChild(option);
+    })
+  });
+
+
+  form.appendChild(projectCategory);
+
+  const btnAjouterPhoto = document.createElement("button");
+  btnAjouterPhoto.setAttribute('type', 'submit')
+  btnAjouterPhoto.classList.add("btnConnexion");
+  btnAjouterPhoto.innerHTML = "Ajouter une photo";
+  btnAjouterPhoto.addEventListener('click', ()=> {
+    const formData = new FormData(form)
+    createProject(Object.fromEntries(formData))
+  });
+  form.appendChild(btnAjouterPhoto);
+  modal.appendChild(form);
+}
+
+function createProject(projet) {
+  console.log(projet)
+
+  fetch("/pieces/1/avis", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: projet
+  });
+}
+
 
 function deleteModal(overlay) {
   overlay.remove();
