@@ -234,7 +234,20 @@ function createProject(projet) {
     body: projet
   });
 }
-
+// fetch('http://localhost:5678/api/works', {
+//   method: 'POST',
+//   body: formData,
+//   headers: {
+//       'Authorization': `Bearer ${localStorage.getItem('token')}`
+//   }
+// })
+// .then(response => {
+//   if (requete.status === 201) {
+//       console.log('image envoyée');
+//
+//   } else {
+//       console.error('erreur');
+//   }
 
 function deleteModal(overlay) {
   overlay.remove();
