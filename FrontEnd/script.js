@@ -62,6 +62,7 @@ function displayFilters(filters) {
 
   const btnTous = document.createElement("button");
   btnTous.classList.add("btn_projects");
+  btnTous.setAttribute("autofocus", "true");
   btnTous.innerText = "Tous";
   btnTous.addEventListener("click", () => {
     getProjects().then((projects) => {
@@ -108,10 +109,16 @@ function createEditElements() {
 
   body.appendChild(banner);
 
+  /* Log out */
+
+  const logout = document.getElementById("login");
+  logout.innerHTML = "logout";
+
   /* Bouton action*/
 
   const editBtn = document.createElement("button");
-  editBtn.innerHTML = '<i class="fa-regular fa-pen-to-square"></i> Modifier';
+  editBtn.innerHTML = '<i class="fa-regular fa-pen-to-square"></i> modifier';
+  editBtn.classList.add("editBtn");
   editBtn.addEventListener("click", () => {
     createModal();
   });
@@ -131,6 +138,10 @@ function createModal() {
   modal = document.createElement("div");
   modal.classList.add("modal");
 
+  const modalTitle = document.createElement("p");
+  modalTitle.classList.add("modalTitle");
+  modalTitle.innerHTML = "Galerie Photo";
+
   const gallery = document.createElement("div");
   gallery.classList.add("galleryModal");
   modal.appendChild(gallery);
@@ -140,10 +151,14 @@ function createModal() {
     displayGallery(projects, null, gallery, true);
   });
 
+  const bordure = document.createElement("hr");
+  bordure.classList.add("bordure");
+  modal.appendChild(bordure);
 
-  const button = document.createElement('button');
-  button.classList.add('add_project');
-  button.innerHTML = "Ajouter une photo"
+  const button = document.createElement("button");
+  button.classList.add("add_project");
+  button.innerHTML = "Ajouter une photo";
+  modal.appendChild(modalTitle);
 
   button.addEventListener("click", () => {
     displayAddProjectModal(modal, overlay);
@@ -166,72 +181,120 @@ function createModal() {
 
 function displayAddProjectModal(modal, overlay) {
   modal.innerHTML = "";
-  const modalTitle = document.createElement("h1");
-  modalTitle.classList.add('modalTitle')
-  modalTitle.innerHTML = "Galerie photo";
+  const modalTitle = document.createElement("p");
+  modalTitle.classList.add("modalTitle");
+  modalTitle.innerHTML = "Ajout photo";
   modal.appendChild(modalTitle);
-
 
   /* Créer le bouton retour */
   const back = document.createElement("div");
   back.classList.add("back");
   back.innerHTML = '<i class="fa-solid fa-arrow-left"></i>';
   back.addEventListener("click", () => {
-    deleteModal(overlay)
-    createModal()
+    deleteModal(overlay);
+    createModal();
   });
   modal.appendChild(back);
 
   /* CREER UN FORMULAIRE */
-  const form = document.createElement('form');
-  form.setAttribute('id', 'createProject')
-  form.addEventListener('submit', (e) => {
+  const form = document.createElement("form");
+  form.setAttribute("id", "createProject");
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
-  })
+  });
 
-  const projectName = document.createElement('input')
-  projectName.setAttribute('type', 'text')
-  projectName.setAttribute('name', 'title')
-  projectName.setAttribute('id', 'title')
+  const labelTitre = document.createElement("h3");
+  labelTitre.classList.add("h3");
+  labelTitre.innerHTML = "Titre";
+  form.appendChild(labelTitre);
+
+  //preview photo//
+const previewPhoto = document.createElement("div");
+previewPhoto.classList.add("previewPhoto")
+modal.appendChild(previewPhoto)
+
+const spanPhoto = document.createElement("span");
+spanPhoto.classList.add("photo_i")
+spanPhoto.innerHTML = `<i class = "fa-regular fa-image"><i>`;
+previewPhoto.appendChild(spanPhoto)
+
+const btnAjoutPhoto = document.createElement("div");
+btnAjoutPhoto.classList.add("btnAjoutPhotoDiv")
+previewPhoto.appendChild(btnAjoutPhoto)
+
+const btnAjout = document.createElement("bouton")
+btnAjout.setAttribute("type", "submit")
+btnAjout.classList.add("btnAjout")
+btnAjout.innerHTML = "+ Ajouter une photo"
+btnAjoutPhoto.appendChild(btnAjout)
+
+const inputPhoto = document.createElement("input")
+inputPhoto.setAttribute("type", "file")
+inputPhoto.setAttribute("name", "photo")
+inputPhoto.setAttribute("id", "photo")
+inputPhoto.classList.add("inputPhoto")
+btnAjoutPhoto.appendChild(inputPhoto)
+
+const photoTaille = document.createElement("span")
+photoTaille.innerHTML = "jpg, png : 4mo max"
+photoTaille.classList.add("photoTaille")
+previewPhoto.appendChild(photoTaille)
+
+//
+
+
+  const projectName = document.createElement("input");
+  projectName.setAttribute("type", "text");
+  projectName.setAttribute("name", "title");
+  projectName.setAttribute("id", "title");
   form.appendChild(projectName);
 
+  const labelCategorie = document.createElement("h3");
+  labelCategorie.classList.add("h3");
+  labelCategorie.innerHTML = "Catégorie";
+  form.appendChild(labelCategorie);
 
-  const projectCategory = document.createElement('select')
-  projectCategory.setAttribute('name', 'category')
-  projectCategory.setAttribute('id', 'category')
+  const projectCategory = document.createElement("select");
+  projectCategory.setAttribute("name", "category");
+  projectCategory.setAttribute("id", "category");
+
+  const bordure2 = document.createElement("hr");
+  bordure2.classList.add("bordure2");
+  modal.appendChild(bordure2);
 
   getFilters().then((categories) => {
     categories.forEach((categorie) => {
-      const option = document.createElement('option');
-      option.setAttribute('value', categorie.id);
-      option.setAttribute('name', categorie.name);
+      const option = document.createElement("option");
+      option.setAttribute("value", categorie.id);
+      option.setAttribute("name", categorie.name);
       option.text = categorie.name;
       projectCategory.appendChild(option);
-    })
+    });
   });
-
 
   form.appendChild(projectCategory);
 
   const btnAjouterPhoto = document.createElement("button");
-  btnAjouterPhoto.setAttribute('type', 'submit')
-  btnAjouterPhoto.classList.add("btnConnexion");
-  btnAjouterPhoto.innerHTML = "Ajouter une photo";
-  btnAjouterPhoto.addEventListener('click', ()=> {
-    const formData = new FormData(form)
-    createProject(Object.fromEntries(formData))
+  btnAjouterPhoto.setAttribute("type", "submit");
+  btnAjouterPhoto.classList.add("valider");
+  btnAjouterPhoto.innerHTML = "Valider";
+  btnAjouterPhoto.addEventListener("click", () => {
+    const formData = new FormData(form);
+    createProject(Object.fromEntries(formData));
   });
   form.appendChild(btnAjouterPhoto);
   modal.appendChild(form);
 }
 
+
+//
 function createProject(projet) {
-  console.log(projet)
+  console.log(projet);
 
   fetch("/pieces/1/avis", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: projet
+    body: projet,
   });
 }
 // fetch('http://localhost:5678/api/works', {
@@ -272,3 +335,10 @@ async function deleteProject(modalProject, projectId) {
 }
 
 init();
+
+
+//couleur bouton valider
+if( projectName === "") {
+  btnAjouterPhoto.classList.toggle("validerDisplay")
+  }
+  //projectName défini + haut//
