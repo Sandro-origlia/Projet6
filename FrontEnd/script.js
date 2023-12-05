@@ -209,39 +209,43 @@ function displayAddProjectModal(modal, overlay) {
   form.appendChild(labelTitre);
 
   //preview photo//
-const previewPhoto = document.createElement("div");
-previewPhoto.classList.add("previewPhoto")
-modal.appendChild(previewPhoto)
+  const previewPhoto = document.createElement("div");
+  previewPhoto.classList.add("previewPhoto")
+  modal.appendChild(previewPhoto)
 
-const spanPhoto = document.createElement("span");
-spanPhoto.classList.add("photo_i")
-spanPhoto.innerHTML = `<i class = "fa-regular fa-image"><i>`;
-previewPhoto.appendChild(spanPhoto)
+  const spanPhoto = document.createElement("span");
+  spanPhoto.classList.add("photo_i")
+  spanPhoto.innerHTML = `<i class = "fa-regular fa-image"><i>`;
+  previewPhoto.appendChild(spanPhoto)
 
-const btnAjoutPhoto = document.createElement("div");
-btnAjoutPhoto.classList.add("btnAjoutPhotoDiv")
-previewPhoto.appendChild(btnAjoutPhoto)
+  const btnAjoutPhoto = document.createElement("div");
+  btnAjoutPhoto.classList.add("btnAjoutPhotoDiv")
+  previewPhoto.appendChild(btnAjoutPhoto)
 
-const btnAjout = document.createElement("bouton")
-btnAjout.setAttribute("type", "submit")
-btnAjout.classList.add("btnAjout")
-btnAjout.innerHTML = "+ Ajouter une photo"
-btnAjoutPhoto.appendChild(btnAjout)
+  const btnAjout = document.createElement("label")
+  btnAjout.classList.add("btnAjout")
+  btnAjout.setAttribute('for', 'photo')
+  btnAjout.innerHTML = "+ Ajouter une photo"
+  btnAjoutPhoto.appendChild(btnAjout)
 
-const inputPhoto = document.createElement("input")
-inputPhoto.setAttribute("type", "file")
-inputPhoto.setAttribute("name", "photo")
-inputPhoto.setAttribute("id", "photo")
-inputPhoto.classList.add("inputPhoto")
-btnAjoutPhoto.appendChild(inputPhoto)
+  const imgPreview = document.createElement('img');
+  imgPreview.classList.add('preview');
+  previewPhoto.appendChild(imgPreview)
 
-const photoTaille = document.createElement("span")
-photoTaille.innerHTML = "jpg, png : 4mo max"
-photoTaille.classList.add("photoTaille")
-previewPhoto.appendChild(photoTaille)
+  const inputPhoto = document.createElement("input")
+  inputPhoto.setAttribute("type", "file")
+  inputPhoto.setAttribute("name", "photo")
+  inputPhoto.setAttribute("id", "photo")
+  inputPhoto.classList.add("inputPhoto")
+  inputPhoto.addEventListener('change', (event)=> {
+    loadFile(event, imgPreview)
+  })
+  btnAjoutPhoto.appendChild(inputPhoto)
 
-//
-
+  const photoTaille = document.createElement("span")
+  photoTaille.innerHTML = "jpg, png : 4mo max"
+  photoTaille.classList.add("photoTaille")
+  previewPhoto.appendChild(photoTaille)
 
   const projectName = document.createElement("input");
   projectName.setAttribute("type", "text");
@@ -279,38 +283,44 @@ previewPhoto.appendChild(photoTaille)
   btnAjouterPhoto.classList.add("valider");
   btnAjouterPhoto.innerHTML = "Valider";
   btnAjouterPhoto.addEventListener("click", () => {
-    const formData = new FormData(form);
-    createProject(Object.fromEntries(formData));
+    const name = projectName.value;
+    const category = projectCategory.value;
+    const photo = inputPhoto.files[0];
+
+    if (name === '' || category === '' || photo === undefined) {
+      alert('Remplissez tous les champs')
+    } else {
+      const formData = new FormData();
+      formData.append("image", photo);
+      formData.append('category', parseInt(category))
+      formData.append('title', name)
+      createProject(formData);
+    }
+  
   });
   form.appendChild(btnAjouterPhoto);
   modal.appendChild(form);
 }
 
 
-//
 function createProject(projet) {
-  console.log(projet);
-
-  fetch("/pieces/1/avis", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: projet,
-  });
+ fetch('http://localhost:5678/api/works', {
+  method: 'POST',
+  body: projet,
+  headers: {
+      'Authorization': `Bearer ${token}`
+  }
+})
+.then(response => {
+  if (response.status === 201) {
+      alert('Projet Ajouté');
+      window.location.href = 'index.html'
+  } else {
+      console.error('erreur');
+  }
+});
 }
-// fetch('http://localhost:5678/api/works', {
-//   method: 'POST',
-//   body: formData,
-//   headers: {
-//       'Authorization': `Bearer ${localStorage.getItem('token')}`
-//   }
-// })
-// .then(response => {
-//   if (requete.status === 201) {
-//       console.log('image envoyée');
-//
-//   } else {
-//       console.error('erreur');
-//   }
+
 
 function deleteModal(overlay) {
   overlay.remove();
@@ -318,7 +328,6 @@ function deleteModal(overlay) {
 
 async function deleteProject(modalProject, projectId) {
   const landingProject = document.querySelector("#project" + projectId);
-  console.log(token);
 
   await fetch("http://localhost:5678/api/works/" + projectId, {
     method: "DELETE",
@@ -334,11 +343,14 @@ async function deleteProject(modalProject, projectId) {
   });
 }
 
+function loadFile(event, imagePreview) {
+  const reader = new FileReader();
+  reader.onload = function () {
+    imagePreview.style.display = 'block'
+      imagePreview.src = reader.result;
+  };
+  console.log(event.target.files[0])
+  reader.readAsDataURL(event.target.files[0]);
+}
+
 init();
-
-
-//couleur bouton valider
-if( projectName === "") {
-  btnAjouterPhoto.classList.toggle("validerDisplay")
-  }
-  //projectName défini + haut//

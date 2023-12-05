@@ -341,16 +341,18 @@ button:focus {
   margin-left: 10%;
   margin-right: 10%;
   margin-top: 20%;
+  gap: 10px;
 }
 
 .galleryModal img {
-  width: 80%;
-  height: 170%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .galleryModal figure {
-  height: 50%;
-  width: 125%;
+  height: 100px;
+  position: relative;
 }
 
 .fa-trash {
@@ -359,9 +361,9 @@ button:focus {
   background-color: black;
   padding: 1px;
   font-size: 13px;
-  position: relative;
-  left: -17%;
-  top: -150%;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .galleryModal figcaption {
@@ -533,6 +535,15 @@ footer nav ul {
   border-radius: 3px;
   width: 70%;
   margin-left: 15%;
+  position: relative;
+}
+
+.preview {
+  width: 100%;
+  height: 250px;
+  object-fit: contain;
+  position: absolute;
+  display: none;
 }
 
 .photo_i {
@@ -543,26 +554,18 @@ footer nav ul {
 .btnAjoutPhotoDiv {
   display: inline-block;
   position: relative;
-  overflow: hidden;
 }
 
 .btnAjout {
-  width: 200px;
   background: #cbd6dc;
   border-radius: 50px;
   border: none;
   padding: 1rem;
   color: #306685;
   font-weight: 500;
+  cursor: pointer;
 }
 
 .inputPhoto {
-  left: 0;
-  top: 0;
-  opacity: 0;
-  position: absolute;
-  font-size: 90px;
-}
-
-.photoTaille {
+  display: none;
 }
