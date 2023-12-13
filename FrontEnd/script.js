@@ -280,7 +280,7 @@ function displayAddProjectModal(modal, overlay) {
 
   const btnAjouterPhoto = document.createElement("button");
   btnAjouterPhoto.setAttribute("type", "submit");
-  btnAjouterPhoto.classList.add("valider");
+  btnAjouterPhoto.classList.add("validerDisplay");
   btnAjouterPhoto.innerHTML = "Valider";
   btnAjouterPhoto.addEventListener("click", () => {
     const name = projectName.value;
@@ -290,6 +290,7 @@ function displayAddProjectModal(modal, overlay) {
     if (name === '' || category === '' || photo === undefined) {
       alert('Remplissez tous les champs')
     } else {
+      //btnAjouterPhoto.classList.toogle("valider");
       const formData = new FormData();
       formData.append("image", photo);
       formData.append('category', parseInt(category))

@@ -224,11 +224,12 @@ li:hover {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-column-gap: 20px;
-  grid-row-gap: 20px;
+  grid-row-gap: 30px;
 }
 
 .gallery img {
   width: 100%;
+  height: 100%;
 }
 #contact {
   width: 50%;
@@ -374,7 +375,7 @@ button:focus {
   font-size: 20px;
   color: black;
   position: absolute;
-  top: 20%;
+  top: 17%;
   right: 30%;
 }
 
@@ -405,7 +406,7 @@ footer nav ul {
 .modalTitle {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 47%;
   transform: translate(-50%, -1100%);
   font-size: 26px;
 }
@@ -499,28 +500,30 @@ footer nav ul {
 .valider {
   cursor: pointer;
   font-family: "Syne";
-  margin: auto;
   width: 179px;
   background: #1d6154;
   color: white;
   border-radius: 60px;
   padding: 0.5rem 1rem;
   border: none;
-  margin-top: 3.5rem;
-  margin-bottom: 1rem;
+  position: absolute;
+  bottom: 18%;
+  left: 50%;
+  transform: translate(-50%);
 }
 
 .validerDisplay {
   font-family: "Syne";
-  margin: auto;
   width: 179px;
   background: #a7a7a7;
   color: white;
   border-radius: 60px;
   padding: 0.5rem 1rem;
   border: none;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
+  position: absolute;
+  bottom: 18%;
+  left: 50%;
+  transform: translate(-50%);
 }
 
 .previewPhoto {
