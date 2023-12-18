@@ -62,13 +62,13 @@ function displayFilters(filters) {
 
   const btnTous = document.createElement("button");
   btnTous.classList.add("btn_projects");
-  btnTous.classList.add('active')
+  btnTous.classList.add("active");
   btnTous.innerText = "Tous";
   btnTous.addEventListener("click", () => {
-    const btnSelected = document.querySelector('.btn_projects.active');
-    btnSelected.classList.remove('active')
+    const btnSelected = document.querySelector(".btn_projects.active");
+    btnSelected.classList.remove("active");
 
-    btnTous.classList.add('active')
+    btnTous.classList.add("active");
     getProjects().then((projects) => {
       displayGallery(projects, null, gallery);
     });
@@ -84,10 +84,10 @@ function displayFilters(filters) {
     button.classList.add("btn_projects");
     button.innerText = filter.name;
     button.addEventListener("click", () => {
-      const btnSelected = document.querySelector('.btn_projects.active');
-      btnSelected.classList.remove('active')
+      const btnSelected = document.querySelector(".btn_projects.active");
+      btnSelected.classList.remove("active");
 
-      button.classList.add('active')
+      button.classList.add("active");
       getProjects().then((projects) => {
         displayGallery(projects, filter.id, gallery);
       });
@@ -218,42 +218,42 @@ function displayAddProjectModal(modal, overlay) {
 
   //preview photo//
   const previewPhoto = document.createElement("div");
-  previewPhoto.classList.add("previewPhoto")
-  modal.appendChild(previewPhoto)
+  previewPhoto.classList.add("previewPhoto");
+  modal.appendChild(previewPhoto);
 
   const spanPhoto = document.createElement("span");
-  spanPhoto.classList.add("photo_i")
+  spanPhoto.classList.add("photo_i");
   spanPhoto.innerHTML = `<i class = "fa-regular fa-image"><i>`;
-  previewPhoto.appendChild(spanPhoto)
+  previewPhoto.appendChild(spanPhoto);
 
   const btnAjoutPhoto = document.createElement("div");
-  btnAjoutPhoto.classList.add("btnAjoutPhotoDiv")
-  previewPhoto.appendChild(btnAjoutPhoto)
+  btnAjoutPhoto.classList.add("btnAjoutPhotoDiv");
+  previewPhoto.appendChild(btnAjoutPhoto);
 
-  const btnAjout = document.createElement("label")
-  btnAjout.classList.add("btnAjout")
-  btnAjout.setAttribute('for', 'photo')
-  btnAjout.innerHTML = "+ Ajouter une photo"
-  btnAjoutPhoto.appendChild(btnAjout)
+  const btnAjout = document.createElement("label");
+  btnAjout.classList.add("btnAjout");
+  btnAjout.setAttribute("for", "photo");
+  btnAjout.innerHTML = "+ Ajouter une photo";
+  btnAjoutPhoto.appendChild(btnAjout);
 
-  const imgPreview = document.createElement('img');
-  imgPreview.classList.add('preview');
-  previewPhoto.appendChild(imgPreview)
+  const imgPreview = document.createElement("img");
+  imgPreview.classList.add("preview");
+  previewPhoto.appendChild(imgPreview);
 
-  const inputPhoto = document.createElement("input")
-  inputPhoto.setAttribute("type", "file")
-  inputPhoto.setAttribute("name", "photo")
-  inputPhoto.setAttribute("id", "photo")
-  inputPhoto.classList.add("inputPhoto")
-  inputPhoto.addEventListener('change', (event)=> {
-    loadFile(event, imgPreview)
-  })
-  btnAjoutPhoto.appendChild(inputPhoto)
+  const inputPhoto = document.createElement("input");
+  inputPhoto.setAttribute("type", "file");
+  inputPhoto.setAttribute("name", "photo");
+  inputPhoto.setAttribute("id", "photo");
+  inputPhoto.classList.add("inputPhoto");
+  inputPhoto.addEventListener("change", (event) => {
+    loadFile(event, imgPreview);
+  });
+  btnAjoutPhoto.appendChild(inputPhoto);
 
-  const photoTaille = document.createElement("span")
-  photoTaille.innerHTML = "jpg, png : 4mo max"
-  photoTaille.classList.add("photoTaille")
-  previewPhoto.appendChild(photoTaille)
+  const photoTaille = document.createElement("span");
+  photoTaille.innerHTML = "jpg, png : 4mo max";
+  photoTaille.classList.add("photoTaille");
+  previewPhoto.appendChild(photoTaille);
 
   const projectName = document.createElement("input");
   projectName.setAttribute("type", "text");
@@ -295,58 +295,56 @@ function displayAddProjectModal(modal, overlay) {
     const category = projectCategory.value;
     const photo = inputPhoto.files[0];
 
-    if (name === '' || category === '' || photo === undefined) {
-      alert('Remplissez tous les champs')
+    if (name === "" || category === "" || photo === undefined) {
+      alert("Remplissez tous les champs");
     } else {
       const formData = new FormData();
       formData.append("image", photo);
-      formData.append('category', parseInt(category))
-      formData.append('title', name)
+      formData.append("category", parseInt(category));
+      formData.append("title", name);
       createProject(formData);
     }
-  
   });
 
-  inputPhoto.addEventListener('change', ()=> {
-    validateForm(inputPhoto, projectName, btnAjouterPhoto)
-      })
+  inputPhoto.addEventListener("change", () => {
+    validateForm(inputPhoto, projectName, btnAjouterPhoto);
+  });
 
-  projectName.addEventListener('change', ()=> {
-    validateForm(inputPhoto, projectName, btnAjouterPhoto)
-  })
+  projectName.addEventListener("change", () => {
+    validateForm(inputPhoto, projectName, btnAjouterPhoto);
+  });
 
   form.appendChild(btnAjouterPhoto);
   modal.appendChild(form);
 }
 
-
 function createProject(projet) {
- fetch('http://localhost:5678/api/works', {
-  method: 'POST',
-  body: projet,
-  headers: {
-      'Authorization': `Bearer ${token}`
-  }
-})
-.then(response => {
-  if (response.status === 201) {
-      alert('Projet Ajouté');
-      const overlay = document.querySelector('.overlay')
+  fetch("http://localhost:5678/api/works", {
+    method: "POST",
+    body: projet,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((response) => {
+    if (response.status === 201) {
+      alert("Projet Ajouté");
+      const overlay = document.querySelector(".overlay");
       deleteModal(overlay);
       getProjects().then((projects) => {
         displayGallery(projects, null, gallery);
       });
-  } else {
-      console.error('erreur');
-  }
-});
+    } else {
+      console.error("erreur");
+    }
+  });
 }
 
-function validateForm (imageInput, nameInput, button) {
-  if(imageInput.value !== '' && nameInput.value !== '') {
-    button.classList.add('valider')
+function validateForm(imageInput, nameInput, button) {
+  if (imageInput.value !== "" && nameInput.value !== "") {
+    button.classList.remove("validerDisplay");
+    button.classList.add("valider");
   } else {
-    button.classList.remove('valider')
+    button.classList.remove("valider");
   }
 }
 
@@ -374,10 +372,10 @@ async function deleteProject(modalProject, projectId) {
 function loadFile(event, imagePreview) {
   const reader = new FileReader();
   reader.onload = function () {
-    imagePreview.style.display = 'block'
-      imagePreview.src = reader.result;
+    imagePreview.style.display = "block";
+    imagePreview.src = reader.result;
   };
-  console.log(event.target.files[0])
+  console.log(event.target.files[0]);
   reader.readAsDataURL(event.target.files[0]);
 }
 
