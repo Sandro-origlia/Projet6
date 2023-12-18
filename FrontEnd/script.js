@@ -62,9 +62,13 @@ function displayFilters(filters) {
 
   const btnTous = document.createElement("button");
   btnTous.classList.add("btn_projects");
-  btnTous.setAttribute("autofocus", "true");
+  btnTous.classList.add('active')
   btnTous.innerText = "Tous";
   btnTous.addEventListener("click", () => {
+    const btnSelected = document.querySelector('.btn_projects.active');
+    btnSelected.classList.remove('active')
+
+    btnTous.classList.add('active')
     getProjects().then((projects) => {
       displayGallery(projects, null, gallery);
     });
@@ -80,6 +84,10 @@ function displayFilters(filters) {
     button.classList.add("btn_projects");
     button.innerText = filter.name;
     button.addEventListener("click", () => {
+      const btnSelected = document.querySelector('.btn_projects.active');
+      btnSelected.classList.remove('active')
+
+      button.classList.add('active')
       getProjects().then((projects) => {
         displayGallery(projects, filter.id, gallery);
       });
@@ -290,7 +298,6 @@ function displayAddProjectModal(modal, overlay) {
     if (name === '' || category === '' || photo === undefined) {
       alert('Remplissez tous les champs')
     } else {
-      //btnAjouterPhoto.classList.toogle("valider");
       const formData = new FormData();
       formData.append("image", photo);
       formData.append('category', parseInt(category))
@@ -299,6 +306,15 @@ function displayAddProjectModal(modal, overlay) {
     }
   
   });
+
+  inputPhoto.addEventListener('change', ()=> {
+    validateForm(inputPhoto, projectName, btnAjouterPhoto)
+      })
+
+  projectName.addEventListener('change', ()=> {
+    validateForm(inputPhoto, projectName, btnAjouterPhoto)
+  })
+
   form.appendChild(btnAjouterPhoto);
   modal.appendChild(form);
 }
@@ -315,13 +331,24 @@ function createProject(projet) {
 .then(response => {
   if (response.status === 201) {
       alert('Projet Ajouté');
-      window.location.href = 'index.html'
+      const overlay = document.querySelector('.overlay')
+      deleteModal(overlay);
+      getProjects().then((projects) => {
+        displayGallery(projects, null, gallery);
+      });
   } else {
       console.error('erreur');
   }
 });
 }
 
+function validateForm (imageInput, nameInput, button) {
+  if(imageInput.value !== '' && nameInput.value !== '') {
+    button.classList.add('valider')
+  } else {
+    button.classList.remove('valider')
+  }
+}
 
 function deleteModal(overlay) {
   overlay.remove();
